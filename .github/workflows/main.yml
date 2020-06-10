@@ -36,22 +36,22 @@ jobs:
       - uses: technote-space/workflow-conclusion-action@v1
         name: Transfer Workflow status to environment
       - name: remove old plugin_template.zip
-        run: rm -rf /plugin_template.zip
+        run: rm -rf ./plugin_template.zip
         if: env.WORKFLOW_CONCLUSION == 'success'
       - name: remove old static files
-        run: rm -rf /plugin_template/static/js
+        run: rm -rf ./plugin_template/static/js
         if: env.WORKFLOW_CONCLUSION == 'success'
       - name: remove old index.html
-        run: rm -rf /plugin_template/index.html
+        run: rm -rf ./plugin_template/index.html
         if: env.WORKFLOW_CONCLUSION == 'success'
       - name: Copy index.html to root
-        run: yes | cp -rf /dist/index.html /plugin_template
+        run: cp -rf ./dist/index.html ./plugin_template
         if: env.WORKFLOW_CONCLUSION == 'success'
       - name: Create js folder in static files
-        run: mkdir -p /plugin_template/static/js
+        run: mkdir -p ./plugin_template/static/js
         if: env.WORKFLOW_CONCLUSION == 'success'
       - name: Copy static files to static
-        run: yes | cp -rf /dist/js/* /plugin_template/static/js
+        run: cp -rf ./dist/js/* ./plugin_template/static/js
         if: env.WORKFLOW_CONCLUSION == 'success'
       - uses: montudor/action-zip@v0.1.0
         with:
