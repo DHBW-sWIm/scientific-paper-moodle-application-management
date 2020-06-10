@@ -36,13 +36,13 @@ jobs:
       - uses: technote-space/workflow-conclusion-action@v1
         name: Transfer Workflow status to environment
       - name: remove old plugin_template.zip
-        run: rm -f /plugin_template.zip
+        run: rm -rf /plugin_template.zip
         if: env.WORKFLOW_CONCLUSION == 'success'
       - name: remove old static files
-        run: rm -r /plugin_template/static/*
+        run: rm -rf /plugin_template/static/js
         if: env.WORKFLOW_CONCLUSION == 'success'
       - name: remove old index.html
-        run: rm -r /plugin_template/index.html
+        run: rm -rf /plugin_template/index.html
         if: env.WORKFLOW_CONCLUSION == 'success'
       - name: Copy index.html to root
         run: yes | cp -rf /dist/index.html /plugin_template
