@@ -50,7 +50,9 @@ jobs:
       - name: Copy static files to static
         run: yes | cp -rf /dist/js/* /plugin_template/static/js
         if: env.WORKFLOW_CONCLUSION == 'success'
-      - name: Zip it up
-        uses: montudor/action-zip@v0.1.0
+      - uses: montudor/action-zip@v0.1.0
         with:
           args: zip -qq -r ./plugin_template.zip ./plugin_template
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Moodle Plugin .zip generated
