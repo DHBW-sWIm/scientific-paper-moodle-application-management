@@ -1,0 +1,56 @@
+name: Lint, Build, Deploy and Package
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+    
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    name: Lint
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: npm install
+      - name: Lint
+        run: npm run lint
+
+  deploy_job:
+    needs: [lint]
+    runs-on: ubuntu-latest
+    name: Build & Deploy
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Dependencies
+        run: npm install
+      - name: Build
+        run: npm run build
+      - uses: technote-space/workflow-conclusion-action@v1
+        name: Transfer Workflow status to environment
+      - name: remove old plugin_template.zip
+        run: rm -f /plugin_template.zip
+        if: env.WORKFLOW_CONCLUSION == 'success'
+      - name: remove old static files
+        run: rm -r /plugin_template/static/*
+        if: env.WORKFLOW_CONCLUSION == 'success'
+      - name: remove old index.html
+        run: rm -r /plugin_template/index.html
+        if: env.WORKFLOW_CONCLUSION == 'success'
+      - name: Copy index.html to root
+        run: yes | cp -rf /dist/index.html /plugin_template
+        if: env.WORKFLOW_CONCLUSION == 'success'
+      - name: Create js folder in static files
+        run: mkdir -p /plugin_template/static/js
+        if: env.WORKFLOW_CONCLUSION == 'success'
+      - name: Copy static files to static
+        run: yes | cp -rf /dist/js/* /plugin_template/static/js
+        if: env.WORKFLOW_CONCLUSION == 'success'
+      - name: Zip it up
+        uses: montudor/action-zip@v0.1.0
+        with:
+          args: zip -qq -r ./plugin_template.zip ./plugin_template

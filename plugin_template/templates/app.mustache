@@ -1,0 +1,51 @@
+<div id="app">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Anlage <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" disabled href="#">Manager</a>
+        </li>
+      </ul>
+      <div class="form-inline my-2 my-lg-0">
+        <a class="btn btn-outline-success my-2 my-sm-0">Session</a>
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+    <h2>Anlage Wissenschaftliche Arbeit</h2>
+    <div class="alert alert-success" role="alert">
+      Bitte füllen Sie die Form vollständig aus.
+    </div>
+    <div class="mt-1">
+      <div class="form-group">
+        <label for="paperType" class="form-label">Art der wissenschaftlichen Arbeit</label>
+        <select id="paperType" class="form-control form-control-sm">
+          <option>Projektarbeit 1</option>
+          <option>Projektarbeit 2</option>
+          <option>Bachelorarbeit</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="paperDue" class="form-label">Abgabetermin</label>
+        <div class="">
+          <input class="form-control" type="datetime-local" value="" id="paperDue">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="course" class="form-label">Kurs</label>
+        <div class="">
+          <select id="course" class="form-control form-control-sm">
+            <option>WWI 17 SCB</option>
+            <option>WWI 17 SCI</option>
+            <option>WWI 18 SCB</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primary" v-on:click="clickAnlage">Anlage</button>
+    </div>
+
+  </div>
+</div>
