@@ -56,3 +56,10 @@ jobs:
       - uses: stefanzweifel/git-auto-commit-action@v4
         with:
           commit_message: Moodle Plugin .zip generated
+      - name: Rocket.Chat Notification
+        uses: RocketChat/Rocket.Chat.GitHub.Action.Notification@master
+        if: always()
+        with:
+          type: ${{ job.status }}
+          job_name: '*SCIENTIFIC-PAPER APPLICATION MANAGEMENT: Lint, Build, Deploy and Package*'
+          url: 'https://rocketchat.swimdhbw.de/hooks/EkF4gX6LZRp5GoZdC/tj8wCcjveuNrzN4fYY9TAEm3wxmBYNwo2QyJahjfhXdMenxK'
