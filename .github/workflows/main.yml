@@ -61,5 +61,5 @@ jobs:
         if: always()
         with:
           type: ${{ job.status }}
-          job_name: '*SCIENTIFIC-PAPER APPLICATION MANAGEMENT: Lint, Build, Deploy and Package*'
+          job_name: '*SCIENTIFIC-PAPER-APPLICATION-MANAGEMENT: Lint, Build, Deploy and Package*'
           url: 'https://rocketchat.swimdhbw.de/hooks/EkF4gX6LZRp5GoZdC/tj8wCcjveuNrzN4fYY9TAEm3wxmBYNwo2QyJahjfhXdMenxK'
