@@ -30,6 +30,11 @@
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 require_once(dirname(__FILE__).'/lib.php');
 require_once(dirname(__FILE__).'/locallib.php');
+require_once($CFG->libdir . '/externallib.php');
+require_once($CFG->dirroot . "/webservice/lib.php");
+
+
+
 
 $id = optional_param('id', 0, PARAM_INT); // Course_module ID, or
 $n  = optional_param('n', 0, PARAM_INT);  // ... spam instance ID - it should be named as the first character of the module.
@@ -56,26 +61,50 @@ $event->add_record_snapshot('course', $PAGE->course);
 $event->add_record_snapshot($PAGE->cm->modname, $spam);
 $event->trigger();
 
-// Print the page header.
+//---WEBSERVICE TOKEN CREATION
+$selectedservice = $DB->get_record('external_services', array('shortname' => 'serviceweb', 'enabled' => 1));
+require_login();
+$userid = $USER->id;
+//check the the user is allowed for the service
+$webservicemanager = new webservice();
+if ($selectedservice->restrictedusers) {
+    $restricteduser = $webservicemanager->get_ws_authorised_user($service, $userid);
+    if (empty($restricteduser)) {
+        $allowuserurl = new moodle_url('/' . $CFG->admin . '/webservice/service_users.php',
+                array('id' => $selectedservice->id));
+        $allowuserlink = html_writer::tag('a', $selectedservice->name , array('href' => $allowuserurl));
+        $errormsg = $OUTPUT->notification(get_string('usernotallowed', 'webservice', $allowuserlink));
+    }
+}
+//check if the user is deleted. unconfirmed, suspended or guest
+$user = $DB->get_record('user', array('id' => $userid));
+if ($user->id == $CFG->siteguest or $user->deleted or !$user->confirmed or $user->suspended) {
+    throw new moodle_exception('forbiddenwsuser', 'webservice');
+}
+//process the creation
+if (empty($errormsg)) {
+    $token = external_generate_token_for_current_user($selectedservice);
+    $privatetoken = $token->privatetoken;
+    external_log_token_request($token);
+    $usertoken = new stdClass;
+    $usertoken->token = $token->token;
+    $usertoken->privatetoken = null;
+}
+//---END OF WEBSERVICE TOKEN CREATION
 
+
+// Print the page header.
 $PAGE->set_url('/mod/spam/view.php', array('id' => $cm->id));
 $PAGE->set_title(format_string($spam->name));
 $PAGE->set_heading(format_string($course->fullname));
-//$PAGE->requires->js_call_amd('mod_spam/demo', 'init');
-
-
-
-/*
- * Other things you may want to set - remove if not needed.
- * $PAGE->set_cacheable(false);
- * $PAGE->set_focuscontrol('some-html-id');
- * $PAGE->add_body_class('spam-'.$somevar);
- */
 
 // Output starts here.
 echo $OUTPUT->header();
+if (!empty($errormsg)) {
+    echo $errormsg;
+}
 
+echo '<input type="hidden" id="webservicetoken" value="'.$usertoken->token.'">';
 readfile("index.html");
-//echo $OUTPUT->render_from_template('mod_spam/app', []);
 // Finish the page.
 echo $OUTPUT->footer();
