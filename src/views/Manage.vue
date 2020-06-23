@@ -261,6 +261,16 @@ export default {
           this.$refs.infotoastref.open();
         });
     },
+    mapSupervisorName(id){
+      var name = "";
+      console.log(this.supervisors);// eslint-disable-line
+      for (let i = 0; i < this.supervisors.length; i++) {
+        if (this.supervisors[i].id == id) {
+          name = this.supervisors[i].firstname + ' ' + this.supervisors[i].lastname;
+        }
+      }
+      return name;
+    },
     showStudents(assignment) {
       var aid = assignment.course;
       this.selectedAssignment = assignment.id;
@@ -305,12 +315,13 @@ export default {
                 if (!respo.exception) {
                   for (let i = 0; i < respo.data.length; i++) {
                     for (let j = 0; j < this.students.length; j++) {
-                      if ((this.students[j].id == respo.data[i].studentid) && (respo.data[i].assignmentid == this.selectedAssignment)) {
-                        this.students[j].currentSupervisor = respo.data[i].supervisorid;
+                      if (
+                        this.students[j].id == respo.data[i].studentid &&
+                        respo.data[i].assignmentid == this.selectedAssignment
+                      ) {
+                        this.students[j].currentSupervisor = this.mapSupervisorName(respo.data[i].supervisorid);
                       }
-                      
                     }
-                    
                   }
                   $("#modalStudents").modal("show");
                   this.$emit("loading", "100%", true);
@@ -321,7 +332,6 @@ export default {
                 this.$emit("loading", "100%", true);
                 this.$emit("ajaxerror");
               });
-
           }
         })
         .catch(error => {

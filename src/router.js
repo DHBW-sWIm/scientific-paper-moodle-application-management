@@ -20,6 +20,11 @@ export default new Router({
       path: '/manage',
       name: 'Manage',
       component: () => import('./views/Manage.vue')
+    },
+    {
+      path: '/supervisors',
+      name: 'Supervisors',
+      component: () => import('./views/Supervisors.vue')
     }
   ]
 })

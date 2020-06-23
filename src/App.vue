@@ -20,7 +20,6 @@
 </template>
 
 <script>
-
 import Navbar from "./components/Navbar.vue";
 import Ajaxerror from "./components/Ajaxerror.vue";
 export default {
@@ -33,8 +32,9 @@ export default {
     routeProps() {
       if (this.$route.name === "Manage") {
         return { courses: this.courses, token: this.token };
-      }
-      if (this.$route.name === "Create") {
+      } else if (this.$route.name === "Supervisors") {
+        return { token: this.token };
+      } else if (this.$route.name === "Create") {
         return {};
       } else {
         return {};
@@ -67,14 +67,13 @@ export default {
 
       var cookieThere = false;
 
-        for (var index = 0; index < splitted.length; index++) {
-          if (splitted[index].trim().substring(0, 7) == "wstoken") {
-            cookieThere = true;
-            this.loggedIn = true;
-            this.token = splitted[index].trim().substring(8);
-          }
+      for (var index = 0; index < splitted.length; index++) {
+        if (splitted[index].trim().substring(0, 7) == "wstoken") {
+          cookieThere = true;
+          this.loggedIn = true;
+          this.token = splitted[index].trim().substring(8);
         }
-
+      }
 
       if (!cookieThere) {
         this.loggedIn = false;
