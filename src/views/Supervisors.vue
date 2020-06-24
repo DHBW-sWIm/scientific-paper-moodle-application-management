@@ -5,23 +5,62 @@
       class="alert alert-success"
       role="alert"
     >Wissenschaftliche Betreuer können hier verwaltet werden. Hinweis: Ziel ist die Verwendung normaler Moodle Accounts.</div>
-    <table class="table" >
-      <thead>
-        <tr>
-          <th scope="col">Supervisor ID</th>
-          <th scope="col">Vorname</th>
-          <th scope="col">Nachname</th>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Supervisor ID</th>
+            <th scope="col">Vorname</th>
+            <th scope="col">Nachname</th>
+            <th scope="col">Titel</th>
+            <th scope="col">Geschlecht</th>
+            <th scope="col">Geburtstag</th>
+            <th scope="col">Sprachen</th>
+            <th scope="col">Adresse</th>
+            <th scope="col">Stadt</th>
+            <th scope="col">Postleitzahl</th>
+            <th scope="col">Telefonnummer</th>
+            <th scope="col">E-Mail</th>
+            <th scope="col">IBAN</th>
+            <th scope="col">Spezialisierung</th>
+            <th scope="col">Topictyp</th>
+            <th scope="col">Verfügbare Perioden</th>
+            <th scope="col">Bachelorarbeit</th>
+            <th scope="col">Pro Jahr</th>
+            <th scope="col">Zur gleichen Zeit</th>
+            <th scope="col">Angelegt</th>
+            <th scope="col">Geändert</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="supervisor in supervisors" :key="supervisor.id">
+            <td>{{ supervisor.id }}</td>
+            <td>{{ supervisor.firstname }}</td>
+            <td>{{ supervisor.lastname }}</td>
+            <td>{{ supervisor.title }}</td>
+            <td>{{ formatGender(supervisor.gender) }}</td>
+            <td>{{ new Date(parseInt(supervisor.birthdate)*1000 ).toLocaleDateString()}}</td>
+            <td>{{ supervisor.languages }}</td>
+            <td>{{ supervisor.address }}</td>
+            <td>{{ supervisor.city }}</td>
+            <td>{{ supervisor.postalcode }}</td>
+            <td>{{ supervisor.phone }}</td>
+            <td>{{ supervisor.email }}</td>
+            <td>{{ supervisor.iban }}</td>
+            <td>{{ supervisor.specialisation }}</td>
+            <td>{{supervisor.topictype}}</td>
+            <td>{{supervisor.supportperiod}}</td>
+            <td>{{supervisor.bachelor}}</td>
+            <td>{{parseInt(supervisor.peryear)+1}}</td>
+            <td>{{parseInt(supervisor.atthesametime)+1}}</td>
 
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="supervisor in supervisors" :key="supervisor.id">
-          <td>{{ supervisor.id }}</td>
-          <td>{{ supervisor.firstname }}</td>
-          <td>{{ supervisor.lastname }}</td>
-        </tr>
-      </tbody>
-    </table>
+            <td>{{ new Date(parseInt(supervisor.timecreated)*1000 ).toLocaleDateString()}}</td>
+            <td>{{ new Date(parseInt(supervisor.timemodified)*1000 ).toLocaleDateString()}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <div
       class="modal fade"
       id="modalStudents"
@@ -37,16 +76,10 @@
             <h5 class="modal-title">Modal</h5>
           </div>
           <div class="modal-body">
-            <div class="container">
-              Modal
-            </div>
+            <div class="container">Modal</div>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-primary"
-              data-dismiss="modal"
-            >Änderungen sichern</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Änderungen sichern</button>
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Schließen</button>
           </div>
         </div>
@@ -67,6 +100,7 @@ export default {
     Infotoast,
     Docusign
   },
+  computed: {},
   data() {
     return {
       showModal: false,
@@ -86,6 +120,25 @@ export default {
   },
   created() {},
   methods: {
+    formatGender: function(gender) {
+      var genderString = "";
+      switch (gender) {
+        case "0":
+          genderString = "männlich";
+          break;
+        case "1":
+          genderString = "weiblich";
+          break;
+        case "2":
+          genderString = "divers";
+          break;
+
+        default:
+          genderString = "ungültig";
+          break;
+      }
+      return genderString;
+    },
     getSupervisors: function() {
       this.$emit("loading", "10%", false);
       this.supervisors = [];
