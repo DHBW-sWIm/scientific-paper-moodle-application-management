@@ -5,6 +5,15 @@
       class="alert alert-success"
       role="alert"
     >Wissenschaftliche Betreuer können hier verwaltet werden. Hinweis: Ziel ist die Verwendung normaler Moodle Accounts.</div>
+    <div class="row">
+      <div class="form-group col-8">
+        <input class="form-control" placeholder="Suche" type="text" v-model="search" />
+      </div>
+      <div class="form-group col-4 d-flex justify-content-end">
+        <button class="btn btn-primary">Neuer Supervisor</button>
+      </div>
+    </div>
+
     <div class="table-responsive">
       <table class="table">
         <thead>
@@ -33,7 +42,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="supervisor in supervisors" :key="supervisor.id">
+          <tr v-for="supervisor in filteredItems" :key="supervisor.id">
             <td>{{ supervisor.id }}</td>
             <td>{{ supervisor.firstname }}</td>
             <td>{{ supervisor.lastname }}</td>
@@ -100,9 +109,40 @@ export default {
     Infotoast,
     Docusign
   },
-  computed: {},
+  computed: {
+    filteredItems() {
+      return this.supervisors.filter(supervisor => {
+        return (
+          supervisor.firstname
+            .toLowerCase()
+            .indexOf(this.search.toLowerCase()) > -1 ||
+          supervisor.lastname.toLowerCase().indexOf(this.search.toLowerCase()) >
+            -1 ||
+          supervisor.title.toLowerCase().indexOf(this.search.toLowerCase()) >
+            -1 ||
+          supervisor.address.toLowerCase().indexOf(this.search.toLowerCase()) >
+            -1 ||
+          supervisor.city.toLowerCase().indexOf(this.search.toLowerCase()) >
+            -1 ||
+          supervisor.phone.toLowerCase().indexOf(this.search.toLowerCase()) >
+            -1 ||
+          supervisor.email.toLowerCase().indexOf(this.search.toLowerCase()) >
+            -1 ||
+          supervisor.iban.toLowerCase().indexOf(this.search.toLowerCase()) >
+            -1 ||
+          supervisor.specialisation
+            .toLowerCase()
+            .indexOf(this.search.toLowerCase()) > -1 ||
+          supervisor.topictype
+            .toLowerCase()
+            .indexOf(this.search.toLowerCase()) > -1
+        );
+      });
+    }
+  },
   data() {
     return {
+      search: "",
       showModal: false,
       supervisors: [],
       toastmessage: ""
