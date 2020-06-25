@@ -44,8 +44,15 @@
             class="btn btn-outline-danger my-2 my-sm-0"
             type="submit"
             @click="logout"
+            disabled
             v-if="loggedInSSO"
-          >Logout</button>
+            data-container="body"
+            data-toggle="popover"
+            data-placement="bottom"
+            data-content="NEU: SSO über Moodle Nutzer aktiv"
+          >
+            <span class="badge badge-success">SSO</span> Logout
+          </button>
           <button
             class="btn btn-outline-danger my-2 my-sm-0"
             type="submit"
@@ -61,6 +68,7 @@
 <script>
 import axios from "axios";
 import $ from "jquery";
+import Vue from "vue";
 export default {
   name: "Navbar",
   props: {
@@ -72,12 +80,27 @@ export default {
   },
   mounted() {
     if (
-      document.getElementById("webservicetoken") &&
-      document.getElementById("webservicetoken").value
+      document.querySelector("#webservicetoken") &&
+      document.querySelector("#webservicetoken").getAttribute("value")
     ) {
       this.loggedInSSO = true;
-      this.saveToken(document.getElementById("webservicetoken").value);
-      $('[data-toggle="tooltip"]').tooltip("show");
+      this.saveToken(
+        document.querySelector("#webservicetoken").getAttribute("value")
+      );
+      Vue.nextTick(function() {
+        $('[data-toggle="popover"]').popover();
+        $('[data-toggle="popover"]').popover("show");
+        $("html").on("click", function(e) {
+          if (
+            typeof $(e.target).data("original-title") == "undefined" &&
+            !$(e.target)
+              .parents()
+              .is(".popover.in")
+          ) {
+            $('[data-toggle="popover"]').popover("hide");
+          }
+        });
+      });
     }
   },
   data() {
@@ -114,10 +137,10 @@ export default {
             service: "serviceweb"
           }
         })
-        .then((response) => {
+        .then(response => {
           this.saveToken(response.data.token);
         })
-        .catch((error) =>{
+        .catch(error => {
           console.log(error); // eslint-disable-line
           this.loginLoading = false;
         });
