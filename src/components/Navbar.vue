@@ -40,7 +40,18 @@
           </button>
         </form>
         <form class="form-inline my-2 my-lg-0" @submit.prevent v-if="loggedIn">
-          <button class="btn btn-outline-danger my-2 my-sm-0" type="submit" @click="logout">Logout</button>
+          <button
+            class="btn btn-outline-danger my-2 my-sm-0"
+            type="submit"
+            @click="logout"
+            v-if="loggedInSSO"
+          >Logout</button>
+          <button
+            class="btn btn-outline-danger my-2 my-sm-0"
+            type="submit"
+            @click="logout"
+            v-else
+          >Logout</button>
         </form>
       </div>
     </nav>
@@ -49,6 +60,7 @@
 
 <script>
 import axios from "axios";
+import $ from "jquery";
 export default {
   name: "Navbar",
   props: {
@@ -58,11 +70,22 @@ export default {
     },
     loggedIn: Boolean
   },
+  mounted() {
+    if (
+      document.getElementById("webservicetoken") &&
+      document.getElementById("webservicetoken").value
+    ) {
+      this.loggedInSSO = true;
+      this.saveToken(document.getElementById("webservicetoken").value);
+      $('[data-toggle="tooltip"]').tooltip("show");
+    }
+  },
   data() {
     return {
       user: "",
       psw: "",
-      loginLoading: false
+      loginLoading: false,
+      loggedInSSO: false
     };
   },
   methods: {
@@ -73,8 +96,15 @@ export default {
       document.cookie = "wstoken=" + ";" + "Max-Age=-99999999" + ";path=/";
       this.$emit("loginCheck");
     },
+    saveToken: function(token) {
+      var datev = new Date();
+      datev.setTime(datev.getTime() + 1 * 24 * 60 * 60 * 1000);
+      var expires = "expires=" + datev.toUTCString();
+      document.cookie = "wstoken=" + token + ";" + expires + ";path=/";
+      this.$emit("loginCheck");
+      this.loginLoading = false;
+    },
     getToken: function() {
-      var self = this;
       this.loginLoading = true;
       axios
         .get((process.env.VUE_APP_MOODEL_URL || "") + "/login/token.php", {
@@ -84,18 +114,12 @@ export default {
             service: "serviceweb"
           }
         })
-        .then(function(response) {
-          var datev = new Date();
-          datev.setTime(datev.getTime() + 1 * 24 * 60 * 60 * 1000);
-          var expires = "expires=" + datev.toUTCString();
-          document.cookie =
-            "wstoken=" + response.data.token + ";" + expires + ";path=/";
-          self.$emit("loginCheck");
-          self.loginLoading = false;
+        .then((response) => {
+          this.saveToken(response.data.token);
         })
-        .catch(function(error) {
+        .catch((error) =>{
           console.log(error); // eslint-disable-line
-          self.loginLoading = false;
+          this.loginLoading = false;
         });
     }
   }
