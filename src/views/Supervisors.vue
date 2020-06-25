@@ -10,7 +10,7 @@
         <input class="form-control" placeholder="Suche" type="text" v-model="search" />
       </div>
       <div class="form-group col-4 d-flex justify-content-end">
-        <button class="btn btn-primary">Neuer Supervisor</button>
+        <button class="btn btn-primary" v-on:click="newSupervisorForm">Neuer Supervisor</button>
       </div>
     </div>
 
@@ -94,6 +94,52 @@
         </div>
       </div>
     </div>
+    <div
+      class="modal fade"
+      id="modalNew"
+      ref="modalNew"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="modalNew"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Neuer wissenschaftlicher Betreuer</h5>
+          </div>
+          <div class="modal-body">
+            <div class="container">
+              <form>
+                <div class="form-row">
+                  <div class="col-md-12 mb-3">
+                    <label for="validationServerUsername">Moodle User</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroupPrepend3">@</span>
+                      </div>
+                      <input
+                        type="text"
+                        class="form-control is-invalid"
+                        id="validationServerUsername"
+                        placeholder="Moodle User"
+                        aria-describedby="inputGroupPrepend3"
+                        required
+                      />
+                      <div class="invalid-feedback">Bitte wählen Sie einen Moodle Nutzer aus.</div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Änderungen sichern</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Schließen</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <Infotoast ref="infotoastref" :message="toastmessage" />
     <Docusign ref="docusigner"></Docusign>
   </div>
@@ -101,6 +147,7 @@
 
 <script>
 import axios from "axios";
+import $ from "jquery";
 import Infotoast from "@/components/Infotoast.vue";
 import Docusign from "@/components/Docusign.vue";
 export default {
@@ -142,6 +189,10 @@ export default {
   },
   data() {
     return {
+      newSupervisor:{
+        firstnameValid: true,
+        firstname: "Stephan",
+      },
       search: "",
       showModal: false,
       supervisors: [],
@@ -160,6 +211,9 @@ export default {
   },
   created() {},
   methods: {
+    newSupervisorForm() {
+      $("#modalNew").modal("show");
+    },
     formatGender: function(gender) {
       var genderString = "";
       switch (gender) {
